@@ -1,19 +1,18 @@
 #!/bin/bash
+# Starts the relay stream using today's date for the source URL
 
-# Get today's date in YYMMDD format
-date=$(date +%y%m%d)
+DATECODE=$(date +%y%m%d)
+STREAMURL="https://forbinaquarium.com/Live/00/ph${DATECODE}/ph${DATECODE}_1080p.m3u8"
+OUTDIR="./stream"
 
-# Input stream URL
-input_url="https://forbinaquarium.com/Live/00/ph${date}/ph${date}_1080p.m3u8"
+mkdir -p "$OUTDIR"
+pkill -f "ffmpeg.*ph${DATECODE}" || true
 
-# Output directory - changed to be relative to project
-output_dir="./tmp/hls"
-mkdir -p "$output_dir"
-
-# Run ffmpeg to fetch and segment the stream
-ffmpeg -i "$input_url" \
-  -c:v copy -c:a copy \
-  -f hls -hls_time 4 -hls_list_size 5 -hls_flags delete_segments \
-  "$output_dir/stream.m3u8" &
-
-echo "FFmpeg started, streaming to $output_dir"
+ffmpeg -re \
+  -i "$STREAMURL" \
+  -c copy \
+  -f hls \
+  -hls_time 6 \
+  -hls_list_size 8 \
+  -hls_flags delete_segments \
+  "$OUTDIR/index.m3u8"
