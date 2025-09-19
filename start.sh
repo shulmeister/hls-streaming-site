@@ -1,17 +1,5 @@
 #!/bin/bash
+# Starts Node.js static server and FFmpeg relay
 
-echo "Starting HLS streaming server..."
-
-# Make sure we have the required directory
-mkdir -p ./tmp/hls
-
-# Start ffmpeg in background
-echo "Starting FFmpeg..."
+pm2 start server.js --name hls-server
 bash ffmpeg.sh
-
-# Wait a moment for ffmpeg to start
-sleep 2
-
-# Start the server
-echo "Starting web server on http://localhost:3001"
-npm start
